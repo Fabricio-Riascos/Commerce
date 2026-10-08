@@ -1,0 +1,48 @@
+<section class="card">
+  <div class="card-header">
+    <h2>Registros en cuarentena</h2>
+    <div class="header-actions">
+      <span class="badge">{{ records().length }} registros</span>
+      <button type="button" class="btn btn-secondary" (click)="load()" [disabled]="loading()">
+        {{ loading() ? 'Cargando…' : 'Actualizar' }}
+      </button>
+    </div>
+  </div>
+
+  @if (errorMessage(); as message) {
+    <p class="alert alert-error" role="alert">{{ message }}</p>
+  } @else if (!loading() && records().length === 0) {
+    <p class="hint">No hay registros en cuarentena.</p>
+  } @else {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>pc_processdate</th>
+            <th>pc_codcomercio</th>
+            <th>pc_nomcomred</th>
+            <th>pc_tipodoc</th>
+            <th>pc_numdoc</th>
+            <th>pc_ciudad</th>
+            <th>Motivo</th>
+            <th>Fecha cuarentena</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (record of records(); track record.id) {
+            <tr>
+              <td>{{ record.processDate }}</td>
+              <td>{{ record.commerceCode }}</td>
+              <td>{{ record.commerceName }}</td>
+              <td>{{ record.documentType }}</td>
+              <td>{{ record.documentNumber }}</td>
+              <td>{{ record.city }}</td>
+              <td class="reason">{{ record.reason }}</td>
+              <td>{{ record.quarantinedAt | date: 'yyyy-MM-dd HH:mm' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

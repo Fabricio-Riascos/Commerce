@@ -14,6 +14,30 @@ export interface UploadResult {
   insertedCount: number;
 }
 
+/** Cuerpo de POST /commerce/process. */
+export interface ProcessRequest {
+  processDate: string;
+}
+
+/** Respuesta de POST /commerce/process. */
+export interface ProcessResult {
+  processDate: string;
+  quarantinedCount: number;
+}
+
+/** Registro de GET /commerce/quarantine. */
+export interface QuarantineRecord {
+  id: number;
+  processDate: string;
+  commerceCode: string | null;
+  commerceName: string | null;
+  documentType: string | null;
+  documentNumber: string | null;
+  city: string | null;
+  reason: string;
+  quarantinedAt: string;
+}
+
 /** Error estándar (ProblemDetails) que devuelve la API. */
 export interface ApiProblem {
   title?: string;

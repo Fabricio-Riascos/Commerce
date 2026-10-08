@@ -1,0 +1,30 @@
+<section class="card">
+  <h2>Procesamiento</h2>
+  <p class="hint">
+    Valida los registros de la fecha seleccionada y envía los inválidos a cuarentena.
+  </p>
+
+  <div class="form-row">
+    <label for="processDate">Fecha de proceso</label>
+    <input id="processDate" type="date" [value]="processDate()" (input)="onDateChange($event)" />
+    <button type="button" class="btn btn-primary" (click)="process()" [disabled]="!canProcess()">
+      {{ processing() ? 'Procesando…' : 'Procesar' }}
+    </button>
+  </div>
+
+  @if (errorMessage(); as message) {
+    <p class="alert alert-error" role="alert">{{ message }}</p>
+  }
+
+  @if (result(); as r) {
+    <div class="alert alert-success" role="status">
+      <p>
+        Fecha <strong>{{ r.processDate }}</strong> procesada:
+        <strong>{{ r.quarantinedCount }}</strong> registros enviados a cuarentena.
+      </p>
+      @if (r.quarantinedCount > 0) {
+        <p><a routerLink="/quarantine">Ver registros con errores</a></p>
+      }
+    </div>
+  }
+</section>
