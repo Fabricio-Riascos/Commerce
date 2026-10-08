@@ -41,8 +41,8 @@ public partial class CommerceService(ICommerceRepository repository) : ICommerce
         if (request.ProcessDate is not { } processDate)
             throw new InvalidRequestException("La fecha de proceso es obligatoria.");
 
-        var quarantined = await repository.ProcessAsync(processDate);
-        return new ProcessResultDto(processDate, quarantined);
+        var summary = await repository.ProcessAsync(processDate);
+        return new ProcessResultDto(processDate, summary.ProcessedCount, summary.QuarantinedCount);
     }
 
     /// <inheritdoc />

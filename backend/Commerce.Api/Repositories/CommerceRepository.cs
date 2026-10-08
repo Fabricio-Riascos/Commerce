@@ -26,13 +26,13 @@ public class CommerceRepository(IConfiguration configuration) : ICommerceReposit
     }
 
     /// <inheritdoc />
-    public async Task<int> ProcessAsync(DateOnly processDate)
+    public async Task<ProcessSummary> ProcessAsync(DateOnly processDate)
     {
         var parameters = new DynamicParameters();
         parameters.Add("processdate", processDate.ToDateTime(TimeOnly.MinValue), DbType.Date);
 
         await using var connection = new SqlConnection(_connectionString);
-        return await connection.ExecuteScalarAsync<int>(
+        return await connection.QuerySingleAsync<ProcessSummary>(
             "dbo.sp_process_commerce",
             parameters,
             commandType: CommandType.StoredProcedure);

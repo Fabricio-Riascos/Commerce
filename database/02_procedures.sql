@@ -46,7 +46,7 @@ GO
 -- sp_process_commerce
 -- Valida los registros de la fecha indicada y mueve los inválidos
 -- a commerce_quarantine con su motivo (motivos concatenados).
--- Retorna la cantidad de registros enviados a cuarentena.
+-- Retorna la cantidad de registros revisados y la cantidad enviada a cuarentena.
 -- =============================================
 CREATE PROCEDURE dbo.sp_process_commerce
     @processdate DATE
@@ -55,10 +55,16 @@ BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;  -- ante cualquier error se revierte toda la transacción
 
+    DECLARE @processed INT = 0;
     DECLARE @quarantined INT = 0;
 
     BEGIN TRY
         BEGIN TRANSACTION;
+
+        -- 0. Registros de la fecha que se van a revisar.
+        SELECT @processed = COUNT(*)
+        FROM dbo.commerce
+        WHERE pc_processdate = @processdate;
 
         -- 1. Calcular el motivo de cada registro inválido.
         --    CONCAT_WS ignora los NULL, así solo se concatenan las reglas que fallan.
@@ -100,6 +106,6 @@ BEGIN
         THROW;
     END CATCH;
 
-    SELECT @quarantined AS quarantined_count;
+    SELECT @processed AS ProcessedCount, @quarantined AS QuarantinedCount;
 END;
 GO

@@ -18,8 +18,8 @@ public interface ICommerceRepository
     /// Ejecuta <c>sp_process_commerce</c> para la fecha indicada.
     /// </summary>
     /// <param name="processDate">Fecha de proceso.</param>
-    /// <returns>Cantidad de registros enviados a cuarentena.</returns>
-    Task<int> ProcessAsync(DateOnly processDate);
+    /// <returns>Cantidad de registros revisados y enviados a cuarentena.</returns>
+    Task<ProcessSummary> ProcessAsync(DateOnly processDate);
 
     /// <summary>
     /// Obtiene todos los registros de <c>commerce_quarantine</c>.
