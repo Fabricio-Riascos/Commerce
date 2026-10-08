@@ -6,6 +6,10 @@
 
 .reason {
   color: var(--color-error-text);
-  white-space: normal;
-  min-width: 260px;
+}
+
+@media (max-width: 768px) {
+  .card-header {
+    flex-wrap: wrap;
+  }
 }

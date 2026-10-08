@@ -37,7 +37,7 @@
     </div>
 
     <div class="table-wrapper">
-      <table>
+      <table class="responsive-table">
         <thead>
           <tr>
             <th>#</th>
@@ -52,13 +52,13 @@
         <tbody>
           @for (row of rows(); track $index) {
             <tr>
-              <td>{{ $index + 1 }}</td>
-              <td>{{ row.processDate }}</td>
-              <td>{{ row.commerceCode }}</td>
-              <td>{{ row.commerceName }}</td>
-              <td>{{ row.documentType }}</td>
-              <td>{{ row.documentNumber }}</td>
-              <td>{{ row.city }}</td>
+              <td data-label="#">{{ $index + 1 }}</td>
+              <td data-label="pc_processdate">{{ row.processDate }}</td>
+              <td data-label="pc_codcomercio">{{ row.commerceCode }}</td>
+              <td data-label="pc_nomcomred">{{ row.commerceName }}</td>
+              <td data-label="pc_tipodoc">{{ row.documentType }}</td>
+              <td data-label="pc_numdoc">{{ row.documentNumber }}</td>
+              <td data-label="pc_ciudad">{{ row.city }}</td>
             </tr>
           }
         </tbody>

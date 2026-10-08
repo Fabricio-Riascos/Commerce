@@ -15,7 +15,7 @@
     <p class="hint">No hay registros en cuarentena.</p>
   } @else {
     <div class="table-wrapper">
-      <table>
+      <table class="responsive-table">
         <thead>
           <tr>
             <th>pc_processdate</th>
@@ -31,14 +31,14 @@
         <tbody>
           @for (record of records(); track record.id) {
             <tr>
-              <td>{{ record.processDate }}</td>
-              <td>{{ record.commerceCode }}</td>
-              <td>{{ record.commerceName }}</td>
-              <td>{{ record.documentType }}</td>
-              <td>{{ record.documentNumber }}</td>
-              <td>{{ record.city }}</td>
-              <td class="reason">{{ record.reason }}</td>
-              <td>{{ record.quarantinedAt | date: 'yyyy-MM-dd HH:mm' }}</td>
+              <td data-label="pc_processdate">{{ record.processDate }}</td>
+              <td data-label="pc_codcomercio">{{ record.commerceCode }}</td>
+              <td data-label="pc_nomcomred">{{ record.commerceName }}</td>
+              <td data-label="pc_tipodoc">{{ record.documentType }}</td>
+              <td data-label="pc_numdoc">{{ record.documentNumber }}</td>
+              <td data-label="pc_ciudad">{{ record.city }}</td>
+              <td data-label="Motivo" class="reason">{{ record.reason }}</td>
+              <td data-label="Fecha cuarentena">{{ record.quarantinedAt | date: 'yyyy-MM-dd HH:mm' }}</td>
             </tr>
           }
         </tbody>
