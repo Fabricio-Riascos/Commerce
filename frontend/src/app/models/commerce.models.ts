@@ -22,6 +22,7 @@ export interface ProcessRequest {
 /** Respuesta de POST /commerce/process. */
 export interface ProcessResult {
   processDate: string;
+  processedCount: number;
   quarantinedCount: number;
 }
 

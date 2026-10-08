@@ -17,14 +17,25 @@
   }
 
   @if (result(); as r) {
-    <div class="alert alert-success" role="status">
-      <p>
-        Fecha <strong>{{ r.processDate }}</strong> procesada:
-        <strong>{{ r.quarantinedCount }}</strong> registros enviados a cuarentena.
-      </p>
-      @if (r.quarantinedCount > 0) {
-        <p><a routerLink="/quarantine">Ver registros con errores</a></p>
-      }
-    </div>
+    @if (r.processedCount === 0) {
+      <div class="alert alert-warning" role="status">
+        <p>
+          No hay registros pendientes para la fecha <strong>{{ r.processDate }}</strong>.
+          Cargue un archivo con esa fecha o verifique que no haya sido procesada antes.
+        </p>
+        <p><a routerLink="/upload">Ir a carga de archivo</a></p>
+      </div>
+    } @else {
+      <div class="alert alert-success" role="status">
+        <p>
+          Fecha <strong>{{ r.processDate }}</strong> procesada:
+          {{ r.processedCount }} registros revisados,
+          <strong>{{ r.quarantinedCount }}</strong> enviados a cuarentena.
+        </p>
+        @if (r.quarantinedCount > 0) {
+          <p><a routerLink="/quarantine">Ver registros con errores</a></p>
+        }
+      </div>
+    }
   }
 </section>

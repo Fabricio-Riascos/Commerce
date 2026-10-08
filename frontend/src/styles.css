@@ -8,6 +8,8 @@
   --color-muted: #6b7280;
   --color-success-bg: #dcfce7;
   --color-success-text: #166534;
+  --color-warning-bg: #fef3c7;
+  --color-warning-text: #92400e;
   --color-error-bg: #fee2e2;
   --color-error-text: #991b1b;
   --radius: 8px;
@@ -80,6 +82,11 @@ code {
 .alert-success {
   background: var(--color-success-bg);
   color: var(--color-success-text);
+}
+
+.alert-warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
 }
 
 .alert-error {
