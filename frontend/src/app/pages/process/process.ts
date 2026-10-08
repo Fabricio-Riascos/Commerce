@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { ProcessResult } from '../../models/commerce.models';
 import { CommerceService } from '../../services/commerce.service';
 import { getApiErrorMessage } from '../../utils/api-error';
+import { todayAsIsoDate } from '../../utils/date';
 
 /** Pantalla de procesamiento: elige la fecha y ejecuta la validación. */
 @Component({
@@ -15,7 +16,7 @@ import { getApiErrorMessage } from '../../utils/api-error';
 export class Process {
   private readonly commerceService = inject(CommerceService);
 
-  protected readonly processDate = signal('');
+  protected readonly processDate = signal(todayAsIsoDate());
   protected readonly processing = signal(false);
   protected readonly result = signal<ProcessResult | null>(null);
   protected readonly errorMessage = signal<string | null>(null);
