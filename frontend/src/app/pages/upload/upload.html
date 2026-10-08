@@ -1,0 +1,77 @@
+<section class="card">
+  <h2>Carga de archivo</h2>
+  <p class="hint">Seleccione un archivo <code>commerce_DDMMYYYY.csv</code> separado por punto y coma.</p>
+
+  <label class="file-picker">
+    <span>Archivo CSV</span>
+    <input #fileInput type="file" accept=".csv" (change)="onFileSelected($event)" />
+  </label>
+
+  @if (errorMessage(); as message) {
+    <p class="alert alert-error" role="alert">{{ message }}</p>
+  }
+
+  @if (result(); as r) {
+    <p class="alert alert-success" role="status">
+      Archivo <strong>{{ r.fileName }}</strong> cargado: {{ r.insertedCount }} registros insertados.
+    </p>
+  }
+
+  @if (parseErrors().length > 0) {
+    <div class="alert alert-error" role="alert">
+      <p>El archivo tiene errores de formato y no puede enviarse:</p>
+      <ul>
+        @for (error of parseErrors(); track $index) {
+          <li>{{ error }}</li>
+        }
+      </ul>
+    </div>
+  }
+</section>
+
+@if (rows().length > 0) {
+  <section class="card">
+    <div class="card-header">
+      <h2>Previsualización</h2>
+      <span class="badge">{{ rows().length }} registros</span>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>pc_processdate</th>
+            <th>pc_codcomercio</th>
+            <th>pc_nomcomred</th>
+            <th>pc_tipodoc</th>
+            <th>pc_numdoc</th>
+            <th>pc_ciudad</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track $index) {
+            <tr>
+              <td>{{ $index + 1 }}</td>
+              <td>{{ row.processDate }}</td>
+              <td>{{ row.commerceCode }}</td>
+              <td>{{ row.commerceName }}</td>
+              <td>{{ row.documentType }}</td>
+              <td>{{ row.documentNumber }}</td>
+              <td>{{ row.city }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="uploading()">
+        Cancelar
+      </button>
+      <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="!canSubmit()">
+        {{ uploading() ? 'Enviando…' : 'Enviar al servidor' }}
+      </button>
+    </div>
+  </section>
+}

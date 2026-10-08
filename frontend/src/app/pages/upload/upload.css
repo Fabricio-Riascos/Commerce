@@ -1,0 +1,15 @@
+.file-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.file-picker input {
+  font-weight: 400;
+}
+
+.alert ul {
+  margin: 0.4rem 0 0;
+  padding-left: 1.2rem;
+}
