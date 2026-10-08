@@ -1,5 +1,6 @@
 using System.Data;
 using Dapper;
+using Commerce.Api.Models.Entities;
 using Microsoft.Data.SqlClient;
 
 namespace Commerce.Api.Repositories;
@@ -22,6 +23,40 @@ public class CommerceRepository(IConfiguration configuration) : ICommerceReposit
             "dbo.sp_create_commerce",
             new { rows = table.AsTableValuedParameter("dbo.CommerceTableType") },
             commandType: CommandType.StoredProcedure);
+    }
+
+    /// <inheritdoc />
+    public async Task<int> ProcessAsync(DateOnly processDate)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("processdate", processDate.ToDateTime(TimeOnly.MinValue), DbType.Date);
+
+        await using var connection = new SqlConnection(_connectionString);
+        return await connection.ExecuteScalarAsync<int>(
+            "dbo.sp_process_commerce",
+            parameters,
+            commandType: CommandType.StoredProcedure);
+    }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<CommerceQuarantine>> GetQuarantineAsync()
+    {
+        const string sql = """
+            SELECT id               AS Id,
+                   pc_processdate   AS ProcessDate,
+                   pc_codcomercio   AS CommerceCode,
+                   pc_nomcomred     AS CommerceName,
+                   pc_tipodoc       AS DocumentType,
+                   pc_numdoc        AS DocumentNumber,
+                   pc_ciudad        AS City,
+                   motivo           AS Reason,
+                   fecha_cuarentena AS QuarantinedAt
+            FROM dbo.commerce_quarantine
+            ORDER BY fecha_cuarentena DESC, id DESC;
+            """;
+
+        await using var connection = new SqlConnection(_connectionString);
+        return await connection.QueryAsync<CommerceQuarantine>(sql);
     }
 
     /// <summary>

@@ -35,6 +35,32 @@ public partial class CommerceService(ICommerceRepository repository) : ICommerce
         return new UploadResultDto(file.FileName, inserted);
     }
 
+    /// <inheritdoc />
+    public async Task<ProcessResultDto> ProcessAsync(ProcessRequestDto request)
+    {
+        if (request.ProcessDate is not { } processDate)
+            throw new InvalidRequestException("La fecha de proceso es obligatoria.");
+
+        var quarantined = await repository.ProcessAsync(processDate);
+        return new ProcessResultDto(processDate, quarantined);
+    }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<QuarantineDto>> GetQuarantineAsync()
+    {
+        var records = await repository.GetQuarantineAsync();
+        return records.Select(r => new QuarantineDto(
+            r.Id,
+            DateOnly.FromDateTime(r.ProcessDate),
+            r.CommerceCode,
+            r.CommerceName,
+            r.DocumentType,
+            r.DocumentNumber,
+            r.City,
+            r.Reason,
+            r.QuarantinedAt));
+    }
+
     /// <summary>
     /// Verifica que el nombre cumpla <c>commerce_DDMMYYYY.csv</c> y que la fecha exista.
     /// </summary>
