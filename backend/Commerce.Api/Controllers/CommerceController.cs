@@ -55,11 +55,45 @@ public class CommerceController(ICommerceService service) : ControllerBase
     }
 
     /// <summary>
-    /// Lista los registros en cuarentena con su motivo.
+    /// Lista, paginados, los registros almacenados en la tabla commerce.
     /// </summary>
-    /// <response code="200">Lista de registros (puede estar vacía).</response>
+    /// <param name="processDate">Filtro opcional por fecha de proceso (yyyy-MM-dd).</param>
+    /// <param name="paging">Query string <c>page</c> (desde 1) y <c>pageSize</c> (1 a 100).</param>
+    /// <response code="200">Página de registros (puede estar vacía).</response>
+    /// <response code="400">Parámetros de paginación inválidos.</response>
+    [HttpGet]
+    [ProducesResponseType<PagedResultDto<CommerceDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetCommerce([FromQuery] DateOnly? processDate, [FromQuery] PageRequestDto paging)
+    {
+        try
+        {
+            return Ok(await service.GetCommerceAsync(processDate, paging));
+        }
+        catch (InvalidRequestException ex)
+        {
+            return Problem(detail: ex.Message, statusCode: StatusCodes.Status400BadRequest);
+        }
+    }
+
+    /// <summary>
+    /// Lista, paginados, los registros en cuarentena con su motivo.
+    /// </summary>
+    /// <param name="paging">Query string <c>page</c> (desde 1) y <c>pageSize</c> (1 a 100).</param>
+    /// <response code="200">Página de registros (puede estar vacía).</response>
+    /// <response code="400">Parámetros de paginación inválidos.</response>
     [HttpGet("quarantine")]
-    [ProducesResponseType<IEnumerable<QuarantineDto>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetQuarantine() =>
-        Ok(await service.GetQuarantineAsync());
+    [ProducesResponseType<PagedResultDto<QuarantineDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetQuarantine([FromQuery] PageRequestDto paging)
+    {
+        try
+        {
+            return Ok(await service.GetQuarantineAsync(paging));
+        }
+        catch (InvalidRequestException ex)
+        {
+            return Problem(detail: ex.Message, statusCode: StatusCodes.Status400BadRequest);
+        }
+    }
 }

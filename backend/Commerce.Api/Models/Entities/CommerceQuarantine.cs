@@ -5,7 +5,6 @@ namespace Commerce.Api.Models.Entities;
 /// </summary>
 public class CommerceQuarantine : Commerce
 {
-    public int Id { get; set; }
     public string Reason { get; set; } = string.Empty;
     public DateTime QuarantinedAt { get; set; }
 }

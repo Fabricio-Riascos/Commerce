@@ -24,8 +24,19 @@ public interface ICommerceService
     Task<ProcessResultDto> ProcessAsync(ProcessRequestDto request);
 
     /// <summary>
-    /// Lista los registros en cuarentena con su motivo.
+    /// Lista, paginados, los registros almacenados en la tabla commerce.
     /// </summary>
-    /// <returns>Registros en cuarentena.</returns>
-    Task<IEnumerable<QuarantineDto>> GetQuarantineAsync();
+    /// <param name="processDate">Filtro opcional por fecha de proceso.</param>
+    /// <param name="paging">Página y tamaño de página.</param>
+    /// <returns>Página de registros.</returns>
+    /// <exception cref="Exceptions.InvalidRequestException">Si los parámetros de paginación no son válidos.</exception>
+    Task<PagedResultDto<CommerceDto>> GetCommerceAsync(DateOnly? processDate, PageRequestDto paging);
+
+    /// <summary>
+    /// Lista, paginados, los registros en cuarentena con su motivo.
+    /// </summary>
+    /// <param name="paging">Página y tamaño de página.</param>
+    /// <returns>Página de registros en cuarentena.</returns>
+    /// <exception cref="Exceptions.InvalidRequestException">Si los parámetros de paginación no son válidos.</exception>
+    Task<PagedResultDto<QuarantineDto>> GetQuarantineAsync(PageRequestDto paging);
 }

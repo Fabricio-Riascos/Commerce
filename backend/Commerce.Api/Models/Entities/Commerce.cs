@@ -5,6 +5,7 @@ namespace Commerce.Api.Models.Entities;
 /// </summary>
 public class Commerce
 {
+    public int Id { get; set; }
     public DateTime ProcessDate { get; set; }
     public string? CommerceCode { get; set; }
     public string? CommerceName { get; set; }

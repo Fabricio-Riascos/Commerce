@@ -22,8 +22,20 @@ public interface ICommerceRepository
     Task<ProcessSummary> ProcessAsync(DateOnly processDate);
 
     /// <summary>
-    /// Obtiene todos los registros de <c>commerce_quarantine</c>.
+    /// Obtiene una página de la tabla <c>commerce</c>.
     /// </summary>
-    /// <returns>Registros en cuarentena, del más reciente al más antiguo.</returns>
-    Task<IEnumerable<CommerceQuarantine>> GetQuarantineAsync();
+    /// <param name="processDate">Filtro opcional por fecha de proceso.</param>
+    /// <param name="page">Número de página, desde 1.</param>
+    /// <param name="pageSize">Cantidad de registros por página.</param>
+    /// <returns>Registros de la página y total de registros que cumplen el filtro.</returns>
+    Task<(IEnumerable<Models.Entities.Commerce> Items, int TotalCount)> GetCommerceAsync(
+        DateOnly? processDate, int page, int pageSize);
+
+    /// <summary>
+    /// Obtiene una página de <c>commerce_quarantine</c>, del más reciente al más antiguo.
+    /// </summary>
+    /// <param name="page">Número de página, desde 1.</param>
+    /// <param name="pageSize">Cantidad de registros por página.</param>
+    /// <returns>Registros de la página y total de registros en cuarentena.</returns>
+    Task<(IEnumerable<CommerceQuarantine> Items, int TotalCount)> GetQuarantineAsync(int page, int pageSize);
 }

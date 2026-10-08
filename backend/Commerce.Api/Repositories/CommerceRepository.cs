@@ -39,9 +39,44 @@ public class CommerceRepository(IConfiguration configuration) : ICommerceReposit
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<CommerceQuarantine>> GetQuarantineAsync()
+    public async Task<(IEnumerable<Models.Entities.Commerce> Items, int TotalCount)> GetCommerceAsync(
+        DateOnly? processDate, int page, int pageSize)
     {
         const string sql = """
+            SELECT COUNT(*)
+            FROM dbo.commerce
+            WHERE @processdate IS NULL OR pc_processdate = @processdate;
+
+            SELECT id             AS Id,
+                   pc_processdate AS ProcessDate,
+                   pc_codcomercio AS CommerceCode,
+                   pc_nomcomred   AS CommerceName,
+                   pc_tipodoc     AS DocumentType,
+                   pc_numdoc      AS DocumentNumber,
+                   pc_ciudad      AS City
+            FROM dbo.commerce
+            WHERE @processdate IS NULL OR pc_processdate = @processdate
+            ORDER BY pc_processdate DESC, id
+            OFFSET @offset ROWS FETCH NEXT @pagesize ROWS ONLY;
+            """;
+
+        var parameters = BuildPagingParameters(page, pageSize);
+        parameters.Add("processdate", processDate?.ToDateTime(TimeOnly.MinValue), DbType.Date);
+
+        await using var connection = new SqlConnection(_connectionString);
+        await using var result = await connection.QueryMultipleAsync(sql, parameters);
+        var total = await result.ReadSingleAsync<int>();
+        var items = await result.ReadAsync<Models.Entities.Commerce>();
+        return (items, total);
+    }
+
+    /// <inheritdoc />
+    public async Task<(IEnumerable<CommerceQuarantine> Items, int TotalCount)> GetQuarantineAsync(
+        int page, int pageSize)
+    {
+        const string sql = """
+            SELECT COUNT(*) FROM dbo.commerce_quarantine;
+
             SELECT id               AS Id,
                    pc_processdate   AS ProcessDate,
                    pc_codcomercio   AS CommerceCode,
@@ -52,11 +87,26 @@ public class CommerceRepository(IConfiguration configuration) : ICommerceReposit
                    motivo           AS Reason,
                    fecha_cuarentena AS QuarantinedAt
             FROM dbo.commerce_quarantine
-            ORDER BY fecha_cuarentena DESC, id DESC;
+            ORDER BY fecha_cuarentena DESC, id DESC
+            OFFSET @offset ROWS FETCH NEXT @pagesize ROWS ONLY;
             """;
 
         await using var connection = new SqlConnection(_connectionString);
-        return await connection.QueryAsync<CommerceQuarantine>(sql);
+        await using var result = await connection.QueryMultipleAsync(sql, BuildPagingParameters(page, pageSize));
+        var total = await result.ReadSingleAsync<int>();
+        var items = await result.ReadAsync<CommerceQuarantine>();
+        return (items, total);
+    }
+
+    /// <summary>
+    /// Parámetros de paginación para OFFSET / FETCH.
+    /// </summary>
+    private static DynamicParameters BuildPagingParameters(int page, int pageSize)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("offset", (page - 1) * pageSize, DbType.Int32);
+        parameters.Add("pagesize", pageSize, DbType.Int32);
+        return parameters;
     }
 
     /// <summary>

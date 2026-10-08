@@ -15,6 +15,7 @@ public partial class CommerceService(ICommerceRepository repository) : ICommerce
     private const char Separator = ';';
     private const int ExpectedColumns = 6;
     private const string RowDateFormat = "yyyy-MM-dd";
+    private const int MaxPageSize = 100;
 
     [GeneratedRegex(@"^commerce_(\d{8})\.csv$", RegexOptions.IgnoreCase)]
     private static partial Regex FileNameRegex();
@@ -46,10 +47,30 @@ public partial class CommerceService(ICommerceRepository repository) : ICommerce
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<QuarantineDto>> GetQuarantineAsync()
+    public async Task<PagedResultDto<CommerceDto>> GetCommerceAsync(DateOnly? processDate, PageRequestDto paging)
     {
-        var records = await repository.GetQuarantineAsync();
-        return records.Select(r => new QuarantineDto(
+        ValidatePaging(paging);
+
+        var (records, total) = await repository.GetCommerceAsync(processDate, paging.Page, paging.PageSize);
+        var items = records.Select(r => new CommerceDto(
+            r.Id,
+            DateOnly.FromDateTime(r.ProcessDate),
+            r.CommerceCode,
+            r.CommerceName,
+            r.DocumentType,
+            r.DocumentNumber,
+            r.City));
+
+        return new PagedResultDto<CommerceDto>(items, paging.Page, paging.PageSize, total);
+    }
+
+    /// <inheritdoc />
+    public async Task<PagedResultDto<QuarantineDto>> GetQuarantineAsync(PageRequestDto paging)
+    {
+        ValidatePaging(paging);
+
+        var (records, total) = await repository.GetQuarantineAsync(paging.Page, paging.PageSize);
+        var items = records.Select(r => new QuarantineDto(
             r.Id,
             DateOnly.FromDateTime(r.ProcessDate),
             r.CommerceCode,
@@ -59,6 +80,20 @@ public partial class CommerceService(ICommerceRepository repository) : ICommerce
             r.City,
             r.Reason,
             r.QuarantinedAt));
+
+        return new PagedResultDto<QuarantineDto>(items, paging.Page, paging.PageSize, total);
+    }
+
+    /// <summary>
+    /// Verifica que la página empiece en 1 y que el tamaño esté entre 1 y <see cref="MaxPageSize"/>.
+    /// </summary>
+    private static void ValidatePaging(PageRequestDto paging)
+    {
+        if (paging.Page < 1)
+            throw new InvalidRequestException("El número de página debe ser mayor o igual a 1.");
+
+        if (paging.PageSize is < 1 or > MaxPageSize)
+            throw new InvalidRequestException($"El tamaño de página debe estar entre 1 y {MaxPageSize}.");
     }
 
     /// <summary>
