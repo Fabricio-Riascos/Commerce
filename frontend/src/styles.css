@@ -120,6 +120,12 @@ th {
   white-space: nowrap;
 }
 
+/* Valores que no deben partirse en dos líneas: fechas, códigos y documentos. */
+td.nowrap {
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
 /* En pantallas angostas cada fila se muestra como tarjeta: "etiqueta: valor". */
 @media (max-width: 768px) {
   .responsive-table thead {

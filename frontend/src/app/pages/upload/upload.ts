@@ -1,13 +1,18 @@
 import { Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { CommerceRow, UploadResult } from '../../models/commerce.models';
 import { CommerceService } from '../../services/commerce.service';
+import { Paginator } from '../../shared/paginator/paginator';
 import { getApiErrorMessage } from '../../utils/api-error';
 import { isValidCommerceFileName, parseCommerceCsv } from '../../utils/commerce-csv';
+
+const PAGE_SIZE = 10;
 
 /** Pantalla de carga: selecciona el CSV, lo previsualiza y lo envía a la API. */
 @Component({
   selector: 'app-upload',
+  imports: [Paginator, RouterLink],
   templateUrl: './upload.html',
   styleUrl: './upload.css',
 })
@@ -15,8 +20,17 @@ export class Upload {
   private readonly commerceService = inject(CommerceService);
   private readonly fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
 
+  protected readonly pageSize = PAGE_SIZE;
   protected readonly file = signal<File | null>(null);
   protected readonly rows = signal<CommerceRow[]>([]);
+  protected readonly page = signal(1);
+
+  /** La previsualización se pagina en el navegador: el archivo ya está en memoria. */
+  protected readonly pagedRows = computed(() => {
+    const start = (this.page() - 1) * PAGE_SIZE;
+    return this.rows().slice(start, start + PAGE_SIZE);
+  });
+  protected readonly firstRowNumber = computed(() => (this.page() - 1) * PAGE_SIZE + 1);
   protected readonly parseErrors = signal<string[]>([]);
   protected readonly uploading = signal(false);
   protected readonly result = signal<UploadResult | null>(null);
@@ -49,6 +63,7 @@ export class Upload {
 
     this.file.set(selected);
     this.rows.set(rows);
+    this.page.set(1);
     this.parseErrors.set(errors);
   }
 

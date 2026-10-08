@@ -1,6 +1,6 @@
 <section class="card">
   <div class="card-header">
-    <h2>Registros en cuarentena</h2>
+    <h2>Registros cargados</h2>
     <div class="header-actions">
       <span class="badge">{{ totalCount() }} registros</span>
       <button type="button" class="btn btn-secondary" (click)="load()" [disabled]="loading()">
@@ -8,11 +8,23 @@
       </button>
     </div>
   </div>
+  <p class="hint">
+    Registros guardados en la tabla <code>commerce</code>. Después de procesar una fecha, solo
+    quedan los válidos; los inválidos pasan a cuarentena.
+  </p>
+
+  <div class="filter">
+    <label for="filterDate">Fecha de proceso</label>
+    <input id="filterDate" type="date" [value]="processDate()" (change)="onDateChange($event)" />
+    @if (processDate()) {
+      <button type="button" class="btn btn-secondary" (click)="clearFilter()">Ver todas</button>
+    }
+  </div>
 
   @if (errorMessage(); as message) {
     <p class="alert alert-error" role="alert">{{ message }}</p>
   } @else if (!loading() && records().length === 0) {
-    <p class="hint">No hay registros en cuarentena.</p>
+    <p class="hint">No hay registros{{ processDate() ? ' para la fecha seleccionada' : '' }}.</p>
   } @else {
     <div class="table-wrapper">
       <table class="responsive-table">
@@ -24,8 +36,6 @@
             <th>pc_tipodoc</th>
             <th>pc_numdoc</th>
             <th>pc_ciudad</th>
-            <th>Motivo</th>
-            <th>Fecha cuarentena</th>
           </tr>
         </thead>
         <tbody>
@@ -37,10 +47,6 @@
               <td data-label="pc_tipodoc" class="nowrap">{{ record.documentType }}</td>
               <td data-label="pc_numdoc" class="nowrap">{{ record.documentNumber }}</td>
               <td data-label="pc_ciudad">{{ record.city }}</td>
-              <td data-label="Motivo" class="reason">{{ record.reason }}</td>
-              <td data-label="Fecha cuarentena" class="nowrap">
-                {{ record.quarantinedAt | date: 'yyyy-MM-dd HH:mm' }}
-              </td>
             </tr>
           }
         </tbody>

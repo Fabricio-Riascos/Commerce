@@ -26,6 +26,26 @@ export interface ProcessResult {
   quarantinedCount: number;
 }
 
+/** Página de resultados que devuelven los listados de la API. */
+export interface PagedResult<T> {
+  items: T[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+}
+
+/** Registro de GET /commerce (tabla commerce). */
+export interface CommerceRecord {
+  id: number;
+  processDate: string;
+  commerceCode: string | null;
+  commerceName: string | null;
+  documentType: string | null;
+  documentNumber: string | null;
+  city: string | null;
+}
+
 /** Registro de GET /commerce/quarantine. */
 export interface QuarantineRecord {
   id: number;

@@ -1,0 +1,22 @@
+<nav class="paginator" aria-label="Paginación">
+  <span class="range">Mostrando {{ from() }}–{{ to() }} de {{ totalCount() }}</span>
+  <div class="controls">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="previous()"
+      [disabled]="disabled() || !hasPrevious()"
+    >
+      Anterior
+    </button>
+    <span>Página {{ page() }} de {{ totalPages() }}</span>
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="next()"
+      [disabled]="disabled() || !hasNext()"
+    >
+      Siguiente
+    </button>
+  </div>
+</nav>

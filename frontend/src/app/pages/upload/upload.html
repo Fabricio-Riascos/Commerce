@@ -14,6 +14,7 @@
   @if (result(); as r) {
     <p class="alert alert-success" role="status">
       Archivo <strong>{{ r.fileName }}</strong> cargado: {{ r.insertedCount }} registros insertados.
+      <a routerLink="/records">Ver registros cargados</a>
     </p>
   }
 
@@ -50,20 +51,27 @@
           </tr>
         </thead>
         <tbody>
-          @for (row of rows(); track $index) {
+          @for (row of pagedRows(); track $index) {
             <tr>
-              <td data-label="#">{{ $index + 1 }}</td>
-              <td data-label="pc_processdate">{{ row.processDate }}</td>
-              <td data-label="pc_codcomercio">{{ row.commerceCode }}</td>
+              <td data-label="#" class="nowrap">{{ firstRowNumber() + $index }}</td>
+              <td data-label="pc_processdate" class="nowrap">{{ row.processDate }}</td>
+              <td data-label="pc_codcomercio" class="nowrap">{{ row.commerceCode }}</td>
               <td data-label="pc_nomcomred">{{ row.commerceName }}</td>
-              <td data-label="pc_tipodoc">{{ row.documentType }}</td>
-              <td data-label="pc_numdoc">{{ row.documentNumber }}</td>
+              <td data-label="pc_tipodoc" class="nowrap">{{ row.documentType }}</td>
+              <td data-label="pc_numdoc" class="nowrap">{{ row.documentNumber }}</td>
               <td data-label="pc_ciudad">{{ row.city }}</td>
             </tr>
           }
         </tbody>
       </table>
     </div>
+
+    <app-paginator
+      [page]="page()"
+      [pageSize]="pageSize"
+      [totalCount]="rows().length"
+      (pageChange)="page.set($event)"
+    />
 
     <div class="actions">
       <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="uploading()">

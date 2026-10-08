@@ -1,9 +1,11 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import {
+  CommerceRecord,
+  PagedResult,
   ProcessRequest,
   ProcessResult,
   QuarantineRecord,
@@ -29,8 +31,18 @@ export class CommerceService {
     return this.http.post<ProcessResult>(`${this.baseUrl}/process`, body);
   }
 
-  /** Obtiene los registros en cuarentena. */
-  getQuarantine(): Observable<QuarantineRecord[]> {
-    return this.http.get<QuarantineRecord[]>(`${this.baseUrl}/quarantine`);
+  /** Obtiene una página de la tabla commerce, opcionalmente filtrada por fecha. */
+  getCommerce(page: number, pageSize: number, processDate?: string): Observable<PagedResult<CommerceRecord>> {
+    let params = new HttpParams().set('page', page).set('pageSize', pageSize);
+    if (processDate) {
+      params = params.set('processDate', processDate);
+    }
+    return this.http.get<PagedResult<CommerceRecord>>(this.baseUrl, { params });
+  }
+
+  /** Obtiene una página de los registros en cuarentena. */
+  getQuarantine(page: number, pageSize: number): Observable<PagedResult<QuarantineRecord>> {
+    const params = new HttpParams().set('page', page).set('pageSize', pageSize);
+    return this.http.get<PagedResult<QuarantineRecord>>(`${this.baseUrl}/quarantine`, { params });
   }
 }
