@@ -1,0 +1,26 @@
+# .NET
+bin/
+obj/
+*.user
+.vs/
+appsettings.Development.json
+
+# Angular / Node
+node_modules/
+dist/
+.angular/
+
+# Editor / SO
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Entorno local
+.env
+claude.md
+CLAUDE.md
+.claude/
+
+# Datos
+*.csv
