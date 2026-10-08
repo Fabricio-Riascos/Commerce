@@ -77,8 +77,12 @@ pc_processdate;pc_codcomercio;pc_nomcomred;pc_tipodoc;pc_numdoc;pc_ciudad
 | Método | Ruta                       | Descripción                                                                  |
 |--------|----------------------------|------------------------------------------------------------------------------|
 | POST   | `/api/commerce/upload`     | Recibe el CSV (`multipart/form-data`, campo `file`) y lo inserta.            |
-| POST   | `/api/commerce/process`    | Body `{ "processDate": "2026-10-07" }`. Retorna la cantidad en cuarentena.   |
+| POST   | `/api/commerce/process`    | Body `{ "processDate": "2026-10-07" }`. Retorna registros revisados y enviados a cuarentena. |
+| GET    | `/api/commerce`            | Lista los registros de `commerce`. Filtro opcional `processDate`.            |
 | GET    | `/api/commerce/quarantine` | Lista los registros en cuarentena con su motivo.                             |
+
+Los listados se paginan en el servidor con `page` (desde 1) y `pageSize` (1 a 100, por defecto 10), por ejemplo
+`/api/commerce/quarantine?page=2&pageSize=10`. La respuesta incluye `items`, `page`, `pageSize`, `totalCount` y `totalPages`.
 
 Los errores de validación responden `400` y los errores no controlados `500`, ambos en formato `ProblemDetails`.
 
@@ -100,6 +104,8 @@ Los errores de validación responden `400` y los errores no controlados `500`, a
   para detectarlos en el proceso y no se pierden ceros a la izquierda.
 - **Arquitectura en capas:** Controller → Service → Repository, con interfaces e inyección de dependencias.
   DTOs separados de las entidades.
+- **Paginación en el servidor:** los listados usan `OFFSET / FETCH`, así la API no devuelve tablas completas.
+  La previsualización del CSV se pagina en el navegador porque los datos aún no se envían.
 - **Secretos:** la cadena de conexión real se maneja con user-secrets y no se versiona.
 - **Frontend:** un componente por pantalla, un servicio por recurso de la API y estado con signals.
   La previsualización se hace en el navegador; la validación definitiva siempre la hace el backend.
